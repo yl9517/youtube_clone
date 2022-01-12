@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "win": "node index.js"
+    "dev": "nodemon --exec babel-node index.js"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yl9517/youtube_clone.git"
@@ -19,5 +20,11 @@
   "homepage": "https://github.com/yl9517/youtube_clone#readme",
   "dependencies": {
     "express": "^4.17.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.7",
+    "@babel/node": "^7.16.8",
+    "@babel/preset-env": "^7.16.7",
+    "nodemon": "^2.0.15"
   }
 }
