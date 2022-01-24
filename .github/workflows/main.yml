@@ -1,12 +1,11 @@
-
 name: nomad CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
