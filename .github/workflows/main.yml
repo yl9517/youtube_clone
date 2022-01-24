@@ -2,7 +2,7 @@ name: nomad CI
 
 on:
   push:
-    branches: [master]
+    branches: [ee]
 
 jobs:
   build:
