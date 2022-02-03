@@ -20,6 +20,7 @@
   "homepage": "https://github.com/yl9517/youtube_clone#readme",
   "dependencies": {
     "express": "^4.17.2",
+    "mongoose": "^6.2.0",
     "morgan": "^1.10.0",
     "pug": "^3.0.2"
   },
