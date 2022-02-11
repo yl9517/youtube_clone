@@ -1,26 +1,46 @@
 import videoModel from "../models/Video.js";
 
 export const home = async (req, res) => {
-  const videos = await videoModel.find({});
+  const videos = await videoModel.find({}).sort({ createdAt: "desc" });
   return res.render("home", { pageTitle: "Home", videos });
 };
 
-export const watch = (req, res) => {
+export const watch = async (req, res) => {
   const { id } = req.params;
-  const video = videos[id - 1]; //id로 비디오 찾기 (배열은 0부터)
-  return res.render("watch", { pageTitle: `Watching:` });
+  const video = await videoModel.findById(id);
+  if (!video) {
+    return res.render("404", { pageTitle: "Video not found" });
+  }
+  return res.render("watch", { pageTitle: video.title, video });
 };
 
-export const getEdit = (req, res) => {
+export const getEdit = async (req, res) => {
   const { id } = req.params;
-  const video = videos[id - 1]; //id로 비디오 찾기 (배열은 0부터)
-  return res.render("edit", { pageTitle: `Editing:` });
+  const video = await videoModel.findById(id);
+  videoModel.findOne;
+  if (!video) {
+    return res.render("404", { pageTitle: "Video not found" });
+  }
+  return res.render("edit", { pageTitle: `Edit : ${video.title}`, video });
 };
 
-export const postEdit = (req, res) => {
+export const postEdit = async (req, res) => {
   const { id } = req.params;
-  const { title } = req.body; //form 데이터 받기
-  videos[id - 1].title = title; //해당 비디오 가져와서 정보 변경
+  const { title, description, hashtags } = req.body; //form 데이터 받기
+
+  const video = await videoModel.exists({ _id: id }); //굳이 video객체가 필요하지 않으므로 exists로 video 찾기
+  if (!video) {
+    //없으면 에러페이지
+    return res.render("404", { pageTitle: "Video not found" });
+  }
+
+  //업데이트하기
+  await videoModel.findByIdAndUpdate(id, {
+    title,
+    description,
+    hashtags: videoModel.formatHashtags(hashtags),
+  });
+
   return res.redirect(`/videos/${id}`);
 };
 
@@ -34,11 +54,7 @@ export const postUpload = async (req, res) => {
       title,
       description,
       createdAt: Date.now(),
-      hashtags: hashtags.split(",").map((word) => `#${word}`), // ,기준으로 분리 후 # 붙여주기
-      meta: {
-        views: 0,
-        rating: 0,
-      },
+      hashtags: videoModel.formatHashtags(hashtags),
     });
   } catch (err) {
     return res.render("upload", {
@@ -50,4 +66,24 @@ export const postUpload = async (req, res) => {
   return res.redirect("/");
 };
 
-export const deleteVideo = (req, res) => res.send("delete Video");
+export const deleteVideo = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await videoModel.findByIdAndDelete(id);
+  } catch (err) {}
+  return res.redirect("/");
+};
+
+export const search = async (req, res) => {
+  const { keyword } = req.query;
+  let videos = [];
+  if (keyword) {
+    videos = await videoModel.find({
+      title: {
+        $regex: new RegExp(keyword, "i"), //contain 방식의 regular expression 생성
+      },
+    });
+  }
+  return res.render("search", { pageTitle: "Search", videos });
+};
