@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-mongoose.connect("mongodb://127.0.0.1:27017/wetube"); //DB연결
+mongoose.connect(process.env.DB_URL); //DB연결
 
 const db = mongoose.connection; //엑세스
 
