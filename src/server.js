@@ -22,7 +22,7 @@ app.use(
     secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
+    store: MongoStore.create({ mongoUrl: process.env.DB_URL }), //DB에 저장하여 session 기억하도록
   })
 );
 

@@ -1,4 +1,5 @@
 import userModel from "../models/User.js";
+import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
 export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
@@ -47,7 +48,7 @@ export const postLogin = async (req, res) => {
   const pageTitle = "Login";
   const { username, password } = req.body;
 
-  const user = await userModel.findOne({ username });
+  const user = await userModel.findOne({ username, socialOnly: false });
   if (!user) {
     return res.status(400).render("login", {
       pageTitle,
@@ -61,10 +62,125 @@ export const postLogin = async (req, res) => {
       errorMsg: "Wrong password",
     });
   }
-  req.session.loggedIn = true; //로그인 t
-  req.session.user = user; //유저 저장
+  //로그인 시켜주기 => middleware에서 받을 수 있음
+  req.session.loggedIn = true;
+  req.session.user = user;
 
   return res.redirect("/");
 };
-export const edit = (req, res) => res.send("Edit User");
+
+//github login
+export const startGithubLogin = (req, res) => {
+  const baseUrl = "https://github.com/login/oauth/authorize";
+  const config = {
+    client_id: process.env.GH_CLIENT,
+    allow_signup: false,
+    scope: "read:user user:email",
+  };
+  const params = new URLSearchParams(config).toString(); //config 합쳐서 url 만들기
+  const finalUrl = `${baseUrl}?${params}`;
+
+  return res.redirect(finalUrl);
+};
+
+export const finishGithubLogin = async (req, res) => {
+  const baseUrl = "https://github.com/login/oauth/access_token";
+  const config = {
+    client_id: process.env.GH_CLIENT,
+    client_secret: process.env.GH_SECRET,
+    code: req.query.code,
+  };
+  const params = new URLSearchParams(config).toString();
+  const finalUrl = `${baseUrl}?${params}`;
+  const tokenRequest = await (
+    await fetch(finalUrl, {
+      method: "POST",
+      headers: {
+        Accept: "application/json", //json 형식임을 알려주기
+      },
+    })
+  ).json();
+
+  //user 정보받기
+  if ("access_token" in tokenRequest) {
+    const { access_token } = tokenRequest;
+    const apiUrl = "https://api.github.com";
+
+    const userData = await (
+      await fetch(`${apiUrl}/user`, {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+    console.log(userData);
+    //user의 email 받기
+    const emailData = await (
+      await fetch(`${apiUrl}/user/emails`, {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      })
+    ).json();
+
+    const emailObj = emailData.find(
+      (email) => email.primary === true && email.verified === true
+    );
+    if (!emailObj) {
+      return res.redirect("/login");
+    }
+    let user = await userModel.findOne({ email: emailObj.email });
+
+    //해당 email을 가진 user가 없다면 (=> 가입)
+    if (!user) {
+      const user = await userModel.create({
+        avatarUrl: userData.avatar_url,
+        name: userData.name,
+        username: userData.login,
+        email: emailObj.email,
+        socialOnly: true,
+        password: "",
+        location: userData.location,
+      });
+    }
+    //가입했으면 로그인 or user가 이미 있으면 로그인
+    req.session.loggedIn = true;
+    req.session.user = user;
+    return res.redirect("/");
+  } else {
+    return res.redirect("/login");
+  }
+};
+
+export const logout = (req, res) => {
+  req.session.destroy();
+  return res.redirect("/");
+};
+export const getEdit = (req, res) => {
+  return res.render("edit-profile", { pateTitle: "Edit Profile" });
+};
+export const postEdit = async (req, res) => {
+  const {
+    session: {
+      user: { _id }, //로그인한 유저의 ID
+    },
+    body: { name, email, username, location },
+  } = req;
+
+  const updatedUser = await userModel.findByIdAndUpdate(
+    _id,
+    {
+      name,
+      email,
+      username,
+      location,
+    },
+    { new: true }
+  );
+
+  const exists = await userModel.exists({ $or: [] });
+  // 세션도 업데이트 시켜줘야함 (session은 DB와 연결되어있지 않으므로)
+  req.session.user = updatedUser;
+  return res.redirect("/users/edit");
+};
 export const remove = (req, res) => res.send("Remove User");

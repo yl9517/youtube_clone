@@ -6,12 +6,17 @@ import {
   postLogin,
 } from "../controllers/userController.js";
 import { home, search } from "../controllers/videoController.js";
+import { publicOnlyMiddleware } from "../middlewares.js";
 
 const rootRouter = express.Router();
 
 rootRouter.get("/", home); //컨트롤러 import 해야함
-rootRouter.route("/join").get(getJoin).post(postJoin);
-rootRouter.route("/login").get(getLogin).post(postLogin);
+rootRouter.route("/join").all(publicOnlyMiddleware).get(getJoin).post(postJoin);
+rootRouter
+  .route("/login")
+  .all(publicOnlyMiddleware)
+  .get(getLogin)
+  .post(postLogin);
 rootRouter.get("/search", search);
 
 export default rootRouter;
