@@ -28,9 +28,10 @@ const userSchema = new mongoose.Schema({
   location: String,
 });
 
+//저장 되기 전 hash 돌리기
 userSchema.pre("save", async function () {
   console.log("user pw:", this.password);
-  this.password = await bcrypt.hash(this.password, 5);
+  this.password = await bcrypt.hash(this.password, 5); //5번 돌리기
   console.log("hash pw:", this.password);
 });
 

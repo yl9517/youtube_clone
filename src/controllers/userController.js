@@ -162,14 +162,30 @@ export const getEdit = (req, res) => {
 export const postEdit = async (req, res) => {
   const {
     session: {
-      user: { _id }, //로그인한 유저의 ID
+      user: { _id, avatarUrl }, //로그인한 유저의 정보
     },
     body: { name, email, username, location },
+    file,
   } = req;
+
+  // 단, 이미 있는 username이나 email이면 업데이트 불가하게 해줘야함
+  // exists 이용하기
+  //(1. 현재유저가 업데이트 하려는 중인지 먼저 알아야함 : form의 바꾸려는 정보가 session.user에 있는 정보와 다른지 확인. => 다르면 변경하고싶다는 것)
+  const findUsername = await userModel.findOne({ username }); //유저네임 같은사람
+  const findEmail = await userModel.findOne({ email }); //이메일 같은사람
+
+  if (findUsername._id != _id || findEmail._id != _id) {
+    //바꾸려는 정보의 아이디가 현재 정보와 같지 않으면 이미 있는정보이므로 업뎃불가
+    return res.render("edit-profile", {
+      pateTitle: "Edit Profile",
+      errorMsg: "User is exist",
+    });
+  }
 
   const updatedUser = await userModel.findByIdAndUpdate(
     _id,
     {
+      avatarUrl: file ? file.path : avatarUrl,
       name,
       email,
       username,
@@ -178,9 +194,50 @@ export const postEdit = async (req, res) => {
     { new: true }
   );
 
-  const exists = await userModel.exists({ $or: [] });
   // 세션도 업데이트 시켜줘야함 (session은 DB와 연결되어있지 않으므로)
   req.session.user = updatedUser;
   return res.redirect("/users/edit");
 };
+
+export const getChangePassword = (req, res) => {
+  if (req.session.user.socialOnly === true) {
+    //이걸 많이 사용하게 되면 middleware로 뺼거임
+    return res.redirect("/");
+  }
+  return res.render("users/change-password", { pageTitle: "Change Password" });
+};
+
+export const postChangePassword = async (req, res) => {
+  const {
+    session: {
+      user: { _id, password }, //req.session.user._id
+    },
+    body: { oldPW, newPW, newPWConfirmation }, //req.body. ...
+  } = req;
+
+  const ok = await bcrypt.compare(oldPW, password); //hash할 비번 앞으로 - 순서 중요
+
+  if (!ok) {
+    return res.status(400).render("users/change-password", {
+      pageTitle: "Change Password",
+      errorMsg: "The current password is incorrect",
+    });
+  }
+
+  if (newPW !== newPWConfirmation) {
+    // 새 비번 둘이 다르면
+    return res.status(400).render("users/change-password", {
+      pageTitle: "Change Password",
+      errorMsg: "The new password does not match the confirmation",
+    });
+  }
+
+  const user = await userModel.findById(_id);
+  user.password = newPW;
+  await user.save();
+  req.session.user.password = user.password;
+
+  return res.redirect("/users/logout");
+};
+
 export const remove = (req, res) => res.send("Remove User");
