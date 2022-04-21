@@ -243,7 +243,6 @@ export const postChangePassword = async (req, res) => {
 };
 
 export const myProfile = async(req, res) => {
-  console.log("여기")
   try{
     const { id } = req.params;
     console.log('id',id);
