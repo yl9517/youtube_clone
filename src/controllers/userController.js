@@ -133,7 +133,7 @@ export const finishGithubLogin = async (req, res) => {
 
     //해당 email을 가진 user가 없다면 (=> 가입)
     if (!user) {
-      const user = await userModel.create({
+       user = await userModel.create({
         avatarUrl: userData.avatar_url,
         name: userData.name,
         username: userData.login,
@@ -146,6 +146,7 @@ export const finishGithubLogin = async (req, res) => {
     //가입했으면 로그인 or user가 이미 있으면 로그인
     req.session.loggedIn = true;
     req.session.user = user;
+
     return res.redirect("/");
   } else {
     return res.redirect("/login");
@@ -156,6 +157,7 @@ export const logout = (req, res) => {
   req.session.destroy();
   return res.redirect("/");
 };
+
 export const getEdit = (req, res) => {
   return res.render("edit-profile", { pateTitle: "Edit Profile" });
 };
@@ -239,5 +241,21 @@ export const postChangePassword = async (req, res) => {
 
   return res.redirect("/users/logout");
 };
+
+export const myProfile = async(req, res) => {
+  console.log("여기")
+  try{
+    const { id } = req.params;
+    console.log('id',id);
+    const user = await userModel.findById(id);
+
+    if(!user){
+      return res.status(400).render("404",{ pageTitle: "user not found"});
+    }
+    return res.render("users/profile", { pageTitle: user.name, user });
+  }catch(err){
+    
+  }
+}
 
 export const remove = (req, res) => res.send("Remove User");
