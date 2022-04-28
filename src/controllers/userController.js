@@ -134,7 +134,7 @@ export const finishGithubLogin = async (req, res) => {
 
     //해당 email을 가진 user가 없다면 (=> 가입)
     if (!user) {
-       user = await userModel.create({
+      user = await userModel.create({
         avatarUrl: userData.avatar_url,
         name: userData.name,
         username: userData.login,
@@ -243,21 +243,18 @@ export const postChangePassword = async (req, res) => {
   return res.redirect("/users/logout");
 };
 
-export const myProfile = async(req, res) => {
-  try{
+export const myProfile = async (req, res) => {
+  try {
     const { id } = req.params;
-    const user = await userModel.findById(id);
+    const user = await userModel.findById(id).populate("videos");
 
-    if(!user){
-      return res.status(400).render("404",{ pageTitle: "user not found"});
+    if (!user) {
+      return res.status(400).render("404", { pageTitle: "user not found" });
     }
 
-    const videos = await videoModel.find({owner: user._id});
-
-    return res.render("users/profile", { pageTitle: user.name, user, videos });
-  }catch(err){
-    
-  }
-}
+    console.log("user", user);
+    return res.render("users/profile", { pageTitle: user.name, user });
+  } catch (err) {}
+};
 
 export const remove = (req, res) => res.send("Remove User");

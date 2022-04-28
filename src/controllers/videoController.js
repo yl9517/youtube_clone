@@ -1,3 +1,4 @@
+import userModel from "../models/User.js";
 import videoModel from "../models/Video.js";
 
 export const home = async (req, res) => {
@@ -8,19 +9,25 @@ export const home = async (req, res) => {
 export const watch = async (req, res) => {
   const { id } = req.params;
   const video = await videoModel.findById(id).populate("owner");
+
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video not found" });
   }
-  return res.render("watch", { pageTitle: video.title, video});
+
+  return res.render("watch", { pageTitle: video.title, video });
 };
 
 export const getEdit = async (req, res) => {
   const { id } = req.params;
   const video = await videoModel.findById(id);
-  videoModel.findOne;
-  if (!video) {
+
+  if (!video)
     return res.status(404).render("404", { pageTitle: "Video not found" });
-  }
+
+  //영상 주인아니면 튕겨내기
+  if (String(video.owner) !== String(req.session.user._id))
+    return res.status(403).redirect("/");
+
   return res.render("edit", { pageTitle: `Edit : ${video.title}`, video });
 };
 
@@ -29,10 +36,13 @@ export const postEdit = async (req, res) => {
   const { title, description, hashtags } = req.body; //form 데이터 받기
 
   const video = await videoModel.exists({ _id: id }); //굳이 video객체가 필요하지 않으므로 exists로 video 찾기
-  if (!video) {
-    //없으면 에러페이지
+  //없으면 에러페이지
+  if (!video)
     return res.status(404).render("404", { pageTitle: "Video not found" });
-  }
+
+  //영상 주인아니면 튕겨내기
+  if (String(video.owner) !== String(req.session.user._id))
+    return res.status(403).redirect("/");
 
   //업데이트하기
   await videoModel.findByIdAndUpdate(id, {
@@ -50,17 +60,23 @@ export const getUpload = (req, res) => {
 export const postUpload = async (req, res) => {
   const { path: fileUrl } = req.file;
   const { title, description, hashtags } = req.body;
-  const {user} = req.session;
+  const { _id } = req.session.user;
 
   try {
-    await videoModel.create({
+    const newVideo = await videoModel.create({
       title,
       fileUrl,
       description,
       createdAt: Date.now(),
-      owner : user._id,
+      owner: _id,
       hashtags: videoModel.formatHashtags(hashtags),
     });
+
+    const user = await userModel.findById(_id);
+
+    user.videos.push(newVideo._id);
+    user.save();
+
     return res.redirect("/");
   } catch (err) {
     console.log(err);
@@ -69,15 +85,21 @@ export const postUpload = async (req, res) => {
       errMsg: err._message,
     });
   }
-
 };
 
 export const deleteVideo = async (req, res) => {
   const { id } = req.params;
+  const video = await videoModel.findById(id);
 
-  try {
-    await videoModel.findByIdAndDelete(id);
-  } catch (err) {}
+  if (!video)
+    return res.status(404).render("404", { pageTitle: "Video not found" });
+
+  await videoModel.findByIdAndDelete(id);
+
+  //영상 주인아니면 튕겨내기
+  if (String(video.owner) !== String(req.session.user._id))
+    return res.status(403).redirect("/");
+
   return res.redirect("/");
 };
 
