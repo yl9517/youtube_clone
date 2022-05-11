@@ -47,7 +47,7 @@ export const getLogin = (req, res) => {
 };
 export const postLogin = async (req, res) => {
   const pageTitle = "Login";
-  const { username, password } = req.body;
+  const { rname, password } = req.body;
 
   const user = await userModel.findOne({ username, socialOnly: false });
   if (!user) {
@@ -246,13 +246,17 @@ export const postChangePassword = async (req, res) => {
 export const myProfile = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await userModel.findById(id).populate("videos");
+    const user = await userModel.findById(id).populate({
+      path: "videos",
+      populate: {
+        path: "owner",
+        model: "User",
+      },
+    });
 
     if (!user) {
       return res.status(400).render("404", { pageTitle: "user not found" });
     }
-
-    console.log("user", user);
     return res.render("users/profile", { pageTitle: user.name, user });
   } catch (err) {}
 };

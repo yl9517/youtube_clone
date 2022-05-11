@@ -2,7 +2,10 @@ import userModel from "../models/User.js";
 import videoModel from "../models/Video.js";
 
 export const home = async (req, res) => {
-  const videos = await videoModel.find({}).sort({ createdAt: "desc" });
+  const videos = await videoModel
+    .find({})
+    .sort({ createdAt: "desc" })
+    .populate("owner");
   return res.render("home", { pageTitle: "Home", videos });
 };
 
@@ -107,11 +110,13 @@ export const search = async (req, res) => {
   const { keyword } = req.query;
   let videos = [];
   if (keyword) {
-    videos = await videoModel.find({
-      title: {
-        $regex: new RegExp(keyword, "i"), //contain 방식의 regular expression 생성
-      },
-    });
+    videos = await videoModel
+      .find({
+        title: {
+          $regex: new RegExp(keyword, "i"), //contain 방식의 regular expression 생성
+        },
+      })
+      .populate("owner");
   }
   return res.render("search", { pageTitle: "Search", videos });
 };
