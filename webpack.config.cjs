@@ -3,7 +3,10 @@ const path = require("path");
 
 console.log(__dirname);
 module.exports = {
-  entry: "./src/client/js/main.js", //처리하고싶은 소스 코드
+  entry: {
+    main: "./src/client/js/main.js", //처리하고싶은 소스 코드
+    videoPlayer: "./src/client/js/videoPlayer.js",
+  },
   plugins: [
     new MiniCssExtractPlugin({
       filename: "css/styles.css",
@@ -14,7 +17,7 @@ module.exports = {
   watch: true,
   output: {
     //결과물
-    filename: "js/main.js",
+    filename: "js/[name].js", //entry의 name을 가져와서 삽입
     path: path.resolve(__dirname, "assets"), // 이어붙일 경로
     clean: true,
   },
