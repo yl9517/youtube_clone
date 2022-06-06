@@ -16,7 +16,7 @@
   \**************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\nconsole.log(\"video player\");\n\n//# sourceURL=webpack://youtube_clone/./src/client/js/videoPlayer.js?");
+eval("__webpack_require__.r(__webpack_exports__);\nvar video = document.getElementById(\"video\");\nvar playBtn = document.getElementById(\"play\");\nvar muteBtn = document.getElementById(\"mute\");\nvar time = document.getElementById(\"time\");\nvar volumen = document.getElementById(\"volumen\");\n\nvar handlePlayClick = function handlePlayClick(e) {\n  if (video.paused) {\n    //비디오가 중지되어있으면 실행하기\n    video.play();\n  } else {\n    video.paused();\n  }\n};\n\nvar handlePause = function handlePause() {\n  return playBtn.innerText = \"Play\";\n};\n\nvar handlePlay = function handlePlay() {\n  return playBtn.innerText = \"Pause\";\n};\n\nvar handleMute = function handleMute(e) {};\n\nplayBtn.addEventListener(\"click\", handlePlayClick); //재생\n\nmuteBtn.addEventListener(\"click\", handleMute); //소리 끄기\n\nvideo.addEventListener(\"pause\", handlePause); //pause 상태면 play 텍스트 출력\n\nvideo.addEventListener(\"play\", handlePlay); //Play 상태면 pause 텍스트 출력\n\n//# sourceURL=webpack://youtube_clone/./src/client/js/videoPlayer.js?");
 
 /***/ })
 

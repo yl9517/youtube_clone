@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/yl9517/youtube_clone#readme",
   "dependencies": {
+    "babel-node": "^0.0.1-security",
     "bcrypt": "^5.0.1",
     "connect-mongo": "^4.6.0",
     "dotenv": "^16.0.0",
