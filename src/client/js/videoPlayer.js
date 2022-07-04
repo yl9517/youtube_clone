@@ -4,6 +4,7 @@ const muteBtn = document.getElementById("mute");
 const time = document.getElementById("time");
 const volumen = document.getElementById("volumen");
 
+console.log(video);
 const handlePlayClick = (e) => {
   if (video.paused) {
     //비디오가 중지되어있으면 실행하기
@@ -16,7 +17,16 @@ const handlePlayClick = (e) => {
 const handlePause = () => (playBtn.innerText = "Play");
 const handlePlay = () => (playBtn.innerText = "Pause");
 
-const handleMute = (e) => {};
+const handleMute = (e) => {
+  if (video.muted) {
+    //muted 되어있으면 음소거 풀기
+    video.muted = false;
+    muteBtn.innerText = "Mute";
+  } else {
+    video.muted = true;
+    muteBtn.innerText = "Unmute";
+  }
+};
 
 playBtn.addEventListener("click", handlePlayClick); //재생
 muteBtn.addEventListener("click", handleMute); //소리 끄기
