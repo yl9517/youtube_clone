@@ -10,17 +10,19 @@ block content
       span#currentTime 00:00
       span  / 
       span#totalTime 00:00
-  //-
-    div
-      p=video.description
-      small=video.createdAt
     div 
-      small Upload By 
-      a(href=`/users/${video.owner._id}`) #{video.owner.name}
-    if String(video.owner._id) === String(loggedInUser._id)
-      a(href=`${video.id}/edit`) Edit Video &rarr; 
-      br
-      a(href=`${video.id}/delete`) Delete Video &rarr; 
+      input(type="range", step="1", value=0, min="0")#timeline
+    //-
+      div
+       p=video.description
+       small=video.createdAt
+     div 
+       small Upload By 
+       a(href=`/users/${video.owner._id}`) #{video.owner.name}
+     if String(video.owner._id) === String(loggedInUser._id)
+       a(href=`${video.id}/edit`) Edit Video &rarr; 
+       br
+       a(href=`${video.id}/delete`) Delete Video &rarr; 
 
 block scripts 
   script(src="/assets/js/videoPlayer.js")
