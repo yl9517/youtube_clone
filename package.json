@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev:server": "nodemon",
-    "dev:assets": "rimraf assets && webpack --config webpack.config.cjs"
+    "dev:assets": "rimraf assets && webpack --mode=development -w"
   },
   "type": "module",
   "repository": {
