@@ -1,6 +1,8 @@
 
 # 🤍 Intro
-**WETUBE**
+**YOUTUBE clone coding**
+
+[주요 기능]
 
 # ⛏ Skills
 - NodeJS
