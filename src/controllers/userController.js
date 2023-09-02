@@ -47,7 +47,7 @@ export const getLogin = (req, res) => {
 };
 export const postLogin = async (req, res) => {
   const pageTitle = "Login";
-  const { rname, password } = req.body;
+  const { username, password } = req.body;
 
   const user = await userModel.findOne({ username, socialOnly: false });
   if (!user) {
