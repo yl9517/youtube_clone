@@ -113,11 +113,17 @@ const handleMouseLeave = () => {
   controlsTimeout = setTimeout(hideControls, 3000);
 };
 
+const handleEnded = () => {
+  const { id } = videoContainer.dataset;
+  fetch(`/api/videos/${id}/view`, { method: "POST" });
+};
+
 playBtn.addEventListener("click", handlePlayClick); //재생
 muteBtn.addEventListener("click", handleMute); //소리 끄기
 volumeRange.addEventListener("input", handleVolumeChange); //볼륨 변경
 video.addEventListener("loadeddata", handleLoadedMetadata); //비디오 load
 video.addEventListener("timeupdate", handleTimeUpdate); //비디오 시간 update
+video.addEventListener("ended", handleEnded);
 video.addEventListener("mousemove", handleMouseMove);
 video.addEventListener("mouseleave", handleMouseLeave);
 timeline.addEventListener("input", handleTimeChange); //시청시간 변경
