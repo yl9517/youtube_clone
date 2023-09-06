@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/yl9517/youtube_clone#readme",
   "dependencies": {
+    "@ffmpeg/core": "^0.8.5",
+    "@ffmpeg/ffmpeg": "^0.9.7",
     "babel-node": "^0.0.1-security",
     "bcrypt": "^5.0.1",
     "connect-mongo": "^4.6.0",

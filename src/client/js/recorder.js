@@ -1,4 +1,5 @@
 import { formatDate } from "../../utils/date.js";
+import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 
 const startBtn = document.getElementById("startBtn");
 const preview = document.getElementById("preview");
@@ -6,13 +7,21 @@ const preview = document.getElementById("preview");
 let stream;
 let recorder;
 let videoFile;
-const handleDownload = () => {
-  const date = formatDate();
+const handleDownload = async () => {
+  const ffmpeg = createFFmpeg({ log: true });
+  await ffmpeg.load();
+  ffmpeg.FS("writeFile", "recording.webm", await fetchFile(videoFile));
+  await ffmpeg.run("-i", "recording.webm", "-r", "60", "output.mp4");
+
+  const mp4File = ffmpeg.FS("readFile", "output.mp4");
+  const mp4Blob = new Blob([mp4File.buffer], { type: "video/mp4" });
+  const mp4Url = URL.createObjectURL(mp4Blob); //마법의 url 생성
 
   //링크 생성
+  const date = formatDate();
   const a = document.createElement("a");
-  a.href = videoFile;
-  a.download = `${date}_MyRecording.webm`;
+  a.href = mp4Url;
+  a.download = `${date}_MyRecording.mp4`;
   document.body.appendChild(a);
   a.click();
 };
@@ -33,11 +42,11 @@ const handleStart = () => {
   recorder.start();
   recorder.ondataavailable = (event) => {
     //녹화 파일 비디오 볼 수 있는 url생성
-    videoFile = URL.createObjectURL(event.data);
+    videoFile = URL.createObjectURL(event.data); //event.data = blob
     preview.srcObject = null;
     //녹화 파일 미리보기
     preview.src = videoFile;
-    video.loop = true;
+    preview.loop = true;
     preview.play();
   };
 };
