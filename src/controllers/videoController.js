@@ -28,9 +28,10 @@ export const getEdit = async (req, res) => {
     return res.status(404).render("404", { pageTitle: "Video not found" });
 
   //영상 주인아니면 튕겨내기
-  if (String(video.owner) !== String(req.session.user._id))
+  if (String(video.owner) !== String(req.session.user._id)) {
+    req.flash("error", "You are not the owner of the video");
     return res.status(403).redirect("/");
-
+  }
   return res.render("edit", { pageTitle: `Edit : ${video.title}`, video });
 };
 
@@ -44,8 +45,10 @@ export const postEdit = async (req, res) => {
     return res.status(404).render("404", { pageTitle: "Video not found" });
 
   //영상 주인아니면 튕겨내기
-  if (String(video.owner) !== String(req.session.user._id))
+  if (String(video.owner) !== String(req.session.user._id)) {
+    req.flash("error", "You are not the owner of the video");
     return res.status(403).redirect("/");
+  }
 
   //업데이트하기
   await videoModel.findByIdAndUpdate(id, {
@@ -54,6 +57,7 @@ export const postEdit = async (req, res) => {
     hashtags: videoModel.formatHashtags(hashtags),
   });
 
+  req.flash("success", "Changes saved");
   return res.redirect(`/videos/${id}`);
 };
 

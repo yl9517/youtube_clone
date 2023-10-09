@@ -155,6 +155,7 @@ export const finishGithubLogin = async (req, res) => {
 
 export const logout = (req, res) => {
   req.session.destroy();
+  req.flash("info", "Bye Bye");
   return res.redirect("/");
 };
 
@@ -203,6 +204,7 @@ export const postEdit = async (req, res) => {
 
 export const getChangePassword = (req, res) => {
   if (req.session.user.socialOnly === true) {
+    req.flash("error", "Can't change password");
     //이걸 많이 사용하게 되면 middleware로 뺼거임
     return res.redirect("/");
   }
@@ -238,6 +240,8 @@ export const postChangePassword = async (req, res) => {
   user.password = newPW;
   await user.save();
   req.session.user.password = user.password;
+
+  req.flash("info", "Password updated");
 
   return res.redirect("/users/logout");
 };
