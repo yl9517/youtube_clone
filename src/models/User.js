@@ -32,6 +32,12 @@ const userSchema = new mongoose.Schema({
       ref: "Video",
     },
   ],
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
 });
 
 //저장 되기 전 hash 돌리기
