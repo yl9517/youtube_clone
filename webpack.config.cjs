@@ -1,12 +1,13 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
 
-console.log(__dirname);
+const BASE_JS = "./src/client/js/";
 module.exports = {
   entry: {
-    main: "./src/client/js/main.js", //처리하고싶은 소스 코드
-    videoPlayer: "./src/client/js/videoPlayer.js",
-    recorder: "./src/client/js/recorder.js",
+    main: BASE_JS + "main.js", //처리하고싶은 소스 코드
+    videoPlayer: BASE_JS + "videoPlayer.js",
+    recorder: BASE_JS + "recorder.js",
+    commentSection: BASE_JS + "commentSection.js",
   },
   plugins: [
     new MiniCssExtractPlugin({
