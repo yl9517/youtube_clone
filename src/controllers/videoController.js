@@ -1,6 +1,6 @@
-
 import userModel from "../models/User.js";
 import videoModel from "../models/Video.js";
+import commentModel from "../models/Comment.js";
 
 export const home = async (req, res) => {
   const videos = await videoModel
@@ -139,17 +139,24 @@ export const registerView = async (req, res) => {
   return res.sendStatus(200);
 };
 
-
 export const createComment = async (req, res) => {
-  const { id } = req.params;
+  const {
+    session: { user },
+    body: { text },
+    params: { id },
+  } = req;
   const video = await videoModel.findById(id);
 
   if (!video) {
     return res.sendStatus(404);
   }
-  const {text} = req.body;
-  console.log("Text",text)
-//  await commentModel.create({})
 
-  return res.sendStatus(200);
+  console.log("user", user, text, id);
+  const comment = await commentModel.create({
+    text,
+    owner: user._id,
+    video: id,
+  });
+
+  return res.sendStatus(201);
 };
