@@ -1,13 +1,27 @@
 const videoContainer = document.getElementById("videoContainer");
 const form = document.getElementById("commentForm");
-const textarea = form.querySelector("textarea");
-const btn = form.querySelector("button");
 
 const handleSubmit = (event) => {
-  event.preventDefault();
+  event.preventDefault(); // 브라우저가 항상 하는 동작 멈추게 하는 기능 (submit 후 새로고침)
 
-  const text = textarea.value;
+  const textarea = form.querySelector("textarea");
+  const videoId = videoContainer.dataset.id;
+  const text=textarea.value;
 
-  const video = videoContainer.dataset.id;
+  if(text === "") {
+    return ;
+  }
+  fetch(`/api/videos/${videoId}/comment`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ text }),
+  });
+
+
 };
-btn.addEventListener("submit", handleSubmit);
+if(form){
+  form.addEventListener("submit", handleSubmit);
+}
+ 
