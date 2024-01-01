@@ -22,5 +22,5 @@
   - `show dbs` db 조회
  
 # 실행
-`dev:server`
-`dev:assets`
+`npm run dev:server`
+`npm run dev:assets`
