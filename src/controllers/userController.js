@@ -113,7 +113,7 @@ export const finishGithubLogin = async (req, res) => {
         },
       })
     ).json();
-    console.log(userData);
+    //   console.log(userData);
     //user의 email 받기
     const emailData = await (
       await fetch(`${apiUrl}/user/emails`, {

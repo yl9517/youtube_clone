@@ -154,7 +154,6 @@ export const createComment = async (req, res) => {
     return res.sendStatus(404);
   }
 
-  console.log("user", user, text, id);
   const comment = await commentModel.create({
     text,
     owner: user._id,
