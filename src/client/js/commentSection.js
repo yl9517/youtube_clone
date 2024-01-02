@@ -22,13 +22,6 @@ const addComment = (text, commentId) => {
   newComment.appendChild(span2);
   videoComments.prepend(newComment);
 };
-const deleteComment = (commentId) => {
-  const videoComments = document.querySelector(".video__comments ul");
-  const deletedComment = document.querySelector(
-    'li[data-id="'.concat(commentId, '"]')
-  );
-  videoComments.removeChild(deletedComment);
-};
 
 const handleSubmit = async (event) => {
   event.preventDefault(); // 브라우저가 항상 하는 동작 멈추게 하는 기능 (submit 후 새로고침)
@@ -54,13 +47,14 @@ const handleSubmit = async (event) => {
   }
 };
 
-const handleDeleteComment = async (evnet) => {
-  const commentId = event.target.parentElement.dataset.id;
+const handleDeleteComment = async (event) => {
+  const li = event.target.parentElement;
+  const commentId = li.dataset.id;
   const response = await fetch(`/api/comments/${commentId}`, {
     method: "DELETE",
   });
   if (response.status === 200) {
-    deleteComment(commentId);
+    li.remove();
   }
 };
 
@@ -68,7 +62,7 @@ if (form) {
   form.addEventListener("submit", handleSubmit);
 }
 if (deleteCommentBtns) {
-  deleteCommentBtns.forEach(function (deleteBtn) {
+  deleteCommentBtns.forEach((deleteBtn) => {
     deleteBtn.addEventListener("click", handleDeleteComment);
   });
 }
