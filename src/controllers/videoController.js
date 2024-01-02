@@ -165,8 +165,8 @@ export const createComment = async (req, res) => {
 };
 
 export const deleteComment = async (req, res) => {
-  const id = req.params.commentId;
-  console.log("id", id);
+  const id = req.params.id;
+
   const comment = await commentModel.findById(id);
 
   if (!comment) {
@@ -176,7 +176,7 @@ export const deleteComment = async (req, res) => {
   if (String(comment.owner) !== String(req.session.user._id))
     return res.status(403).redirect("/");
 
-  const response = await commentModel.findByIdAndDelete(id);
+  await commentModel.findByIdAndDelete(id);
 
   return res.sendStatus(200);
 };
