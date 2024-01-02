@@ -55,9 +55,8 @@ const handleSubmit = async (event) => {
 };
 
 const handleDeleteComment = async (evnet) => {
-  const videoId = videoContainer.dataset.id;
   const commentId = event.target.parentElement.dataset.id;
-  const response = await fetch(`/api/videos/${videoId}/comment/${commentId}`, {
+  const response = await fetch(`/api/comments/${commentId}`, {
     method: "DELETE",
   });
   if (response.status === 200) {
