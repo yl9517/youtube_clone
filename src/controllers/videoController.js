@@ -1,6 +1,6 @@
-
 import userModel from "../models/User.js";
 import videoModel from "../models/Video.js";
+import commentModel from "../models/Comment.js";
 
 export const home = async (req, res) => {
   const videos = await videoModel
@@ -12,7 +12,10 @@ export const home = async (req, res) => {
 
 export const watch = async (req, res) => {
   const { id } = req.params;
-  const video = await videoModel.findById(id).populate("owner");
+  const video = await videoModel
+    .findById(id)
+    .populate("owner")
+    .populate("comments");
 
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video not found" });
@@ -103,12 +106,11 @@ export const deleteVideo = async (req, res) => {
   if (!video)
     return res.status(404).render("404", { pageTitle: "Video not found" });
 
-  await videoModel.findByIdAndDelete(id);
-
   //영상 주인아니면 튕겨내기
   if (String(video.owner) !== String(req.session.user._id))
     return res.status(403).redirect("/");
 
+  await videoModel.findByIdAndDelete(id);
   return res.redirect("/");
 };
 
@@ -139,17 +141,42 @@ export const registerView = async (req, res) => {
   return res.sendStatus(200);
 };
 
-
 export const createComment = async (req, res) => {
-  const { id } = req.params;
+  const {
+    session: { user },
+    body: { text },
+    params: { id },
+  } = req;
   const video = await videoModel.findById(id);
 
   if (!video) {
     return res.sendStatus(404);
   }
-  const {text} = req.body;
-  console.log("Text",text)
-//  await commentModel.create({})
+
+  const comment = await commentModel.create({
+    text,
+    owner: user._id,
+    video: id,
+  });
+  video.comments.push(comment._id);
+  video.save();
+
+  return res.status(201).json({ newCommentId: comment._id });
+};
+
+export const deleteComment = async (req, res) => {
+  const id = req.params.commentId;
+  console.log("id", id);
+  const comment = await commentModel.findById(id);
+
+  if (!comment) {
+    return res.status(404).json({ error: "Comment not found" });
+  }
+  //댓글 주인아니면 튕겨내기
+  if (String(comment.owner) !== String(req.session.user._id))
+    return res.status(403).redirect("/");
+
+  const response = await commentModel.findByIdAndDelete(id);
 
   return res.sendStatus(200);
 };

@@ -30,10 +30,18 @@ block content
         br
         a(href=`${video.id}/delete`) Delete Video &rarr; 
   if loggedIn
-    div.video__comments
+    div.video__add-comments
       form.video__comment-form#commentForm
         textarea(cols="30",rows="5",placeholder="Write a nice comment...")
         button Add Comment
+  div.video__comments
+    ul
+      each comment in video.comments.reverse()
+        li.video__comment(data-id=comment._id)
+          i.fas.fa-comment
+          |  #{comment.text}
+          if String(video.owner._id) === String(loggedInUser._id)
+            span.video__delete-comment ❌
 
 block scripts 
   script(src="/assets/js/videoPlayer.js")
