@@ -106,12 +106,11 @@ export const deleteVideo = async (req, res) => {
   if (!video)
     return res.status(404).render("404", { pageTitle: "Video not found" });
 
-  await videoModel.findByIdAndDelete(id);
-
   //영상 주인아니면 튕겨내기
   if (String(video.owner) !== String(req.session.user._id))
     return res.status(403).redirect("/");
 
+  await videoModel.findByIdAndDelete(id);
   return res.redirect("/");
 };
 
@@ -162,5 +161,22 @@ export const createComment = async (req, res) => {
   video.comments.push(comment._id);
   video.save();
 
-  return res.sendStatus(201);
+  return res.status(201).json({ newCommentId: comment._id });
+};
+
+export const deleteComment = async (req, res) => {
+  const id = req.params.commentId;
+  console.log("id", id);
+  const comment = await commentModel.findById(id);
+
+  if (!comment) {
+    return res.status(404).json({ error: "Comment not found" });
+  }
+  //댓글 주인아니면 튕겨내기
+  if (String(comment.owner) !== String(req.session.user._id))
+    return res.status(403).redirect("/");
+
+  const response = await commentModel.findByIdAndDelete(id);
+
+  return res.sendStatus(200);
 };
