@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node build/init.js",
+    "build": "npm run build:server && npm run build:assets",
+    "build:server": "babel src -d build",
+    "build:assets": "webpack --mode=production",
     "dev:server": "nodemon",
     "dev:assets": "rimraf assets && webpack --mode=development -w"
   },
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yl9517/youtube_clone.git"
@@ -35,9 +38,13 @@
     "pug": "^3.0.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.23.4",
     "@babel/core": "^7.16.7",
     "@babel/node": "^7.16.8",
     "@babel/preset-env": "^7.16.7",
+    "@types/express-flash": "^0.0.5",
+    "@types/express-session": "^1.17.10",
+    "@types/morgan": "^1.9.9",
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
     "mini-css-extract-plugin": "^2.6.0",

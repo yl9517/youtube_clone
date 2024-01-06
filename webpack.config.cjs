@@ -14,8 +14,6 @@ module.exports = {
       filename: "css/styles.css",
     }),
   ],
-
-  mode: "development",
   output: {
     //결과물
     filename: "js/[name].js", //entry의 name을 가져와서 삽입
