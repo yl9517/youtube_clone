@@ -170,7 +170,7 @@ export const deleteComment = async (req, res) => {
   const comment = await commentModel.findById(id);
 
   if (!comment) {
-    return res.status(404).json({ error: "Comment not found" });
+    return res.status(404).json({ error: "Comment not found!" });
   }
   //댓글 주인아니면 튕겨내기
   if (String(comment.owner) !== String(req.session.user._id))
