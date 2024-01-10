@@ -15,6 +15,10 @@
     "type": "git",
     "url": "git+https://github.com/yl9517/youtube_clone.git"
   },
+  "engines": {
+    "node": "21.5.0",
+    "npm": "10.2.4"
+  },
   "author": "Summer",
   "license": "ISC",
   "bugs": {
