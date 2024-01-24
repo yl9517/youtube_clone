@@ -20,9 +20,9 @@ header
               if loggedInUser.avatarUrl === ""
                 span 😀
               else              
-                if loggedInUser.socialOnly    // github 로그인
+                if loggedInUser.socialOnly   
                   img.header__avatar(src=loggedInUser.avatarUrl)
-                else  // 사이트 로그인
+                else 
                   img.header__avatar(src="/" +loggedInUser.avatarUrl)
       else
         li 
