@@ -19,8 +19,11 @@ header
           a(href=`/users/${loggedInUser._id}`)
               if loggedInUser.avatarUrl === ""
                 span 😀
-              else                    
-                img.header__avatar(src=loggedInUser.avatarUrl)
+              else              
+                if loggedInUser.socialOnly    // github 로그인
+                  img.header__avatar(src=loggedInUser.avatarUrl)
+                else  // 사이트 로그인
+                  img.header__avatar(src="/" +loggedInUser.avatarUrl)
       else
         li 
           a(href="/login") Login
