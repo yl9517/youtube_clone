@@ -188,7 +188,7 @@ export const postEdit = async (req, res) => {
   const updatedUser = await userModel.findByIdAndUpdate(
     _id,
     {
-      avatarUrl: file ? file.path : avatarUrl,
+      avatarUrl: file ? file.location : avatarUrl,
       name,
       email,
       username,
