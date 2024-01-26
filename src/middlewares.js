@@ -31,7 +31,6 @@ export const publicOnlyMiddleware = (req, res, next) => {
 };
 
 //파일 업로드
-console.log(process.env.AWS_KEY);
 const s3 = new S3Client({
   region: "ap-northeast-2",
   credentials: {

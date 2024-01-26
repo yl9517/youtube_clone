@@ -121,7 +121,7 @@ const handleEnded = () => {
 playBtn.addEventListener("click", handlePlayClick); //재생
 muteBtn.addEventListener("click", handleMute); //소리 끄기
 volumeRange.addEventListener("input", handleVolumeChange); //볼륨 변경
-video.addEventListener("loadeddata", handleLoadedMetadata); //비디오 load
+video.addEventListener("canplay", handleLoadedMetadata); //비디오 load
 video.addEventListener("timeupdate", handleTimeUpdate); //비디오 시간 update
 video.addEventListener("ended", handleEnded);
 video.addEventListener("mousemove", handleMouseMove);
