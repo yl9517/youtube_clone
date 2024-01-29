@@ -32,7 +32,7 @@ export const postJoin = async (req, res) => {
       password,
       location,
     });
-  } catch (err) {
+  } catch (error) {
     return res.status(404).render("join", {
       pageTitle,
       errorMsg: error._message,
@@ -185,10 +185,11 @@ export const postEdit = async (req, res) => {
     });
   }
 
+  const isHeroku = process.env.NOTE_ENV === "production";
   const updatedUser = await userModel.findByIdAndUpdate(
     _id,
     {
-      avatarUrl: file ? file.location : avatarUrl,
+      avatarUrl: file ? (isHeroku ? file.location : file.path) : avatarUrl,
       name,
       email,
       username,
