@@ -14,7 +14,7 @@
 # 📌 Characteristic
 
 
-# local
+### local
 - env
   - 노션 참고
 - mongodb 접속 (https://www.mongodb.com/docs/manual/administration/install-community/)
@@ -23,14 +23,10 @@
  
 # 실행
 
-### 개발망
+### development
 `npm run dev:server`
 `npm run dev:assets`
 
 ### production
 `npm run build` : build
-  - `npm run build:server` : 백엔드 build 파일 생성
-  - `npm run build:asseets` : 프론트엔드 build
-     - build server는 build assets을 봅니다. (즉, build:server을 실행하면 assetes 실행)
-
 `npm (run) start` : 실행
