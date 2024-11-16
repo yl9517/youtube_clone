@@ -18,7 +18,7 @@
 - env
   - 노션 참고
 - mongodb 접속 (https://www.mongodb.com/docs/manual/administration/install-community/)
-  - mongoDB community 설치 후 `momgosh`로 실행
+  - OS 혹은 docker에 mongoDB community 설치 후 `momgosh`로 실행
   - `show dbs` db 조회
  
 # 실행
